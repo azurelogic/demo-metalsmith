@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    block head
+      block title
+        title= title ? title + " | " + site.title : site.title
+      block styles
+  body
+    block body
+      #layout-main
+        block main

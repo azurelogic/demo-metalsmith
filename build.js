@@ -1,4 +1,7 @@
-var metalsmith = require('metalsmith');
+var metalsmith = require('metalsmith'),
+    markdown = require('metalsmith-markdown'),
+    templates = require('metalsmith-templates'),
+    moment = require('moment');
 
 var siteBuild = metalsmith(__dirname)
     .metadata({
@@ -9,6 +12,11 @@ var siteBuild = metalsmith(__dirname)
     })
     .source('./src')
     .destination('./build')
+    .use(markdown())
+    .use(templates({
+      engine: 'jade',
+      moment: moment
+    }))
     .build(function (err) {
       if (err) {
         console.log(err);
