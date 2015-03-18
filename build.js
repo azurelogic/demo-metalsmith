@@ -1,6 +1,8 @@
 var metalsmith = require('metalsmith'),
     markdown = require('metalsmith-markdown'),
     templates = require('metalsmith-templates'),
+    serve = require('metalsmith-serve'),
+    watch = require('metalsmith-watch'),
     moment = require('moment');
 
 var siteBuild = metalsmith(__dirname)
@@ -16,6 +18,14 @@ var siteBuild = metalsmith(__dirname)
     .use(templates({
       engine: 'jade',
       moment: moment
+    }))
+    .use(serve({
+      port: 8080,
+      verbose: true
+    }))
+    .use(watch({
+      pattern: '**/*',
+      livereload: true
     }))
     .build(function (err) {
       if (err) {
