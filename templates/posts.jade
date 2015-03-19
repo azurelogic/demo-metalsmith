@@ -1,0 +1,12 @@
+extends layout
+block main
+  #posts
+    h1 posts
+    if collections.posts && collections.posts.length > 0
+      each post in collections.posts
+        h2
+          a(href='/' + post.path)!= post.title
+        div!= post.excerpt
+    else
+      h2= collections.posts.length
+      h2 there ain't no posts here, man
