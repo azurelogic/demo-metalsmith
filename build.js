@@ -7,6 +7,9 @@ var metalsmith = require('metalsmith'),
     collections = require('metalsmith-collections'),
     branch = require('metalsmith-branch'),
     permalinks = require('metalsmith-permalinks'),
+    feed = require('metalsmith-feed'),
+    wordcount = require('metalsmith-word-count'),
+    sitemap = require('metalsmith-sitemap'),
     moment = require('moment');
 
 var siteBuild = metalsmith(__dirname)
@@ -32,25 +35,45 @@ var siteBuild = metalsmith(__dirname)
           pattern: 'posts/:title',
           relative: false
         }))
-)
+    )
     .use(branch('!posts/**.html')
         .use(branch('!index.md').use(permalinks({
           relative: false
         })))
     )
+    .use(wordcount({
+      metaKeyCount: "wordCount",
+      metaKeyReadingTime: "readingTime",
+      speed: 300,
+      seconds: false,
+      raw: false
+    }))
     .use(templates({
       engine: 'jade',
       moment: moment
     }))
-    .use(serve({
-      port: 8080,
-      verbose: true
-    }))
-    .use(watch({
-      pattern: '**/*',
-      livereload: true
-    }))
-    .build(function (err) {
+    .use(feed({collection: 'posts'}))
+    .use(sitemap({
+      output: 'sitemap.xml',
+      urlProperty: 'path',
+      hostname: 'https://azurelogic.com',
+      defaults: {
+        priority: 0.5,
+        changefreq: 'daily'
+      }
+    }));
+if (process.env.NODE_ENV !== 'production') {
+  siteBuild = siteBuild
+      .use(serve({
+        port: 8080,
+        verbose: true
+      }))
+      .use(watch({
+        pattern: '**/*',
+        livereload: true
+      }))
+}
+siteBuild.build(function (err) {
       if (err) {
         console.log(err);
       }

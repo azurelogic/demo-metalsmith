@@ -4,3 +4,5 @@ block main
     h1= title
     div By #{author} | Published #{moment(publishDate).format("M.D.YYYY")}
     div!= contents
+    div #{wordCount} words
+    div #{readingTime}
